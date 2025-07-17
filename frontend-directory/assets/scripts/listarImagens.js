@@ -1,4 +1,5 @@
-const BASE_BACKEND_URL = "http://localhost:8888/back_dir/";
+const BASE_BACKEND_URL =
+    "http://localhost:8888/image-store-research/backend-directory/";
 const UPLOADS_PATH = "uploads/";
 const imageListDiv = document.getElementById("image-list");
 const messageDiv = document.getElementById("message");

@@ -5,66 +5,63 @@ document
 
         const messageDiv = document.getElementById("message");
         messageDiv.textContent = "";
-        messageDiv.className = "mt-4 text-center text-sm font-medium";
 
-        const imageFile = document.getElementById("imageFile").files[0];
+        const imageFiles = document.getElementById("imageFile").files;
 
-        if (!imageFile) {
+        console.log(imageFiles);
+
+        if (imageFiles.length === 0) {
             messageDiv.textContent =
-                "Por favor, selecione um arquivo de imagem.";
-            messageDiv.classList.add("text-red-600");
+                "Por favor, selecione pelo menos um arquivo de imagem.";
             return;
         }
 
-        const reader = new FileReader();
+        let successfulUploads = 0;
+        let failedUploads = 0;
+        let totalFiles = imageFiles.length;
 
-        reader.onload = async function (e) {
-            const base64String = e.target.result;
-
-            const base64Data = base64String.split(",")[1];
-            const mimeType = imageFile.type;
-
-            const imageData = {
-                dados_imagem: base64Data,
-                mime_type: mimeType,
-            };
+        for (let i = 0; i < totalFiles; i++) {
+            const file = imageFiles[i];
+            const formData = new FormData();
+            formData.append("imageFile", file);
+            console.log(file);
 
             try {
                 const response = await fetch(
-                    "http://localhost:8888/back_blob/view/Imagem/inserir.php",
+                    "http://localhost:8888/image-store-research/backend-blob/view/Imagem/inserir.php",
                     {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(imageData),
+                        body: formData,
                     }
                 );
 
                 const result = await response.json();
 
-                if (response.ok) {
-                    messageDiv.textContent =
-                        result.message || "Imagem enviada com sucesso!";
-                    messageDiv.classList.add("text-green-600");
-                    document.getElementById("imageUploadForm").reset();
+                if (response.ok && result.success) {
+                    successfulUploads++;
+                    console.log(
+                        `Upload de '${file.name}' bem-sucedido:`,
+                        result.message
+                    );
                 } else {
-                    messageDiv.textContent =
-                        result.message || "Erro ao enviar imagem.";
-                    messageDiv.classList.add("text-red-600");
+                    failedUploads++;
+                    console.error(
+                        `Falha no upload de '${file.name}':`,
+                        result.message || "Erro desconhecido."
+                    );
                 }
             } catch (error) {
-                console.error("Erro na requisição:", error);
-                messageDiv.textContent = "Erro de conexão com o servidor.";
-                messageDiv.classList.add("text-red-600");
+                failedUploads++;
+                console.error(`Erro na requisição para '${file.name}':`, error);
             }
-        };
+        }
 
-        reader.onerror = function (error) {
-            console.error("Erro ao ler o arquivo:", error);
-            messageDiv.textContent = "Erro ao ler o arquivo de imagem.";
-            messageDiv.classList.add("text-red-600");
-        };
-
-        reader.readAsDataURL(imageFile);
+        if (successfulUploads === totalFiles) {
+            messageDiv.textContent = `${successfulUploads} imagem(ns) enviada(s) com sucesso!`;
+            document.getElementById("imageUploadForm").reset();
+        } else if (failedUploads === totalFiles) {
+            messageDiv.textContent = `Erro: Nenhuma imagem foi enviada.`;
+        } else {
+            messageDiv.textContent = `Upload concluído: ${successfulUploads} sucesso(s), ${failedUploads} falha(s).`;
+        }
     });

@@ -6,38 +6,59 @@ document
         const messageDiv = document.getElementById("message");
         messageDiv.textContent = "";
 
-        const imageFile = document.getElementById("imageFile").files[0];
+        imageFiles = document.getElementById("imageFile").files;
 
-        if (!imageFile) {
+        if (imageFiles.length === 0) {
             messageDiv.textContent =
-                "Por favor, selecione um arquivo de imagem.";
+                "Por favor, selecione pelo menos um arquivo de imagem.";
             return;
         }
 
-        const formData = new FormData();
-        formData.append("imageFile", imageFile);
+        let successfulUploads = 0;
+        let failedUploads = 0;
+        let totalFiles = imageFiles.length;
 
-        try {
-            const response = await fetch(
-                "http://localhost:8888/back_dir/view/Imagem/inserir.php",
-                {
-                    method: "POST",
-                    body: formData,
+        for (let i = 0; i < totalFiles; i++) {
+            const file = imageFiles[i];
+            const formData = new FormData();
+            formData.append("imageFile", file);
+
+            try {
+                const response = await fetch(
+                    "http://localhost:8888/image-store-research/backend-directory/view/Imagem/inserir.php",
+                    {
+                        method: "POST",
+                        body: formData,
+                    }
+                );
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    successfulUploads++;
+                    console.log(
+                        `Upload de '${file.name}' bem-sucedido:`,
+                        result.message
+                    );
+                } else {
+                    failedUploads++;
+                    console.error(
+                        `Falha no upload de '${file.name}':`,
+                        result.message || "Erro desconhecido."
+                    );
                 }
-            );
-
-            const result = await response.json();
-
-            if (response.ok) {
-                messageDiv.textContent =
-                    result.message || "Imagem enviada com sucesso!";
-                document.getElementById("imageUploadForm").reset();
-            } else {
-                messageDiv.textContent =
-                    result.message || "Erro ao enviar imagem.";
+            } catch (error) {
+                failedUploads++;
+                console.error(`Erro na requisição para '${file.name}':`, error);
             }
-        } catch (error) {
-            console.error("Erro na requisição:", error);
-            messageDiv.textContent = "Erro de conexão com o servidor.";
+        }
+
+        if (successfulUploads === totalFiles) {
+            messageDiv.textContent = `${successfulUploads} imagem(ns) enviada(s) com sucesso!`;
+            document.getElementById("imageUploadForm").reset();
+        } else if (failedUploads === totalFiles) {
+            messageDiv.textContent = `Erro: Nenhuma imagem foi enviada.`;
+        } else {
+            messageDiv.textContent = `Upload concluído: ${successfulUploads} sucesso(s), ${failedUploads} falha(s).`;
         }
     });

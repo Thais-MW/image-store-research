@@ -5,6 +5,7 @@ class Imagem extends Conexao
 {
     private $dados_imagem;
     private $mime_type;
+    private $tamanho;
 
     // Getters
     function getDadosImagem()
@@ -15,6 +16,11 @@ class Imagem extends Conexao
     function getMimeType()
     {
         return $this->mime_type;
+    }
+
+    function getTamanho()
+    {
+        return $this->tamanho;
     }
 
     // Setters
@@ -28,18 +34,24 @@ class Imagem extends Conexao
         $this->mime_type = $mime_type;
     }
 
+    function setTamanho($tamanho)
+    {
+        $this->tamanho = $tamanho;
+    }
+
     public function insert($obj)
     {
-        $sql = "INSERT INTO imagem(dados_imagem,mime_type) VALUES (:dados_imagem,:mime_type)";
+        $sql = "INSERT INTO imagem(dados_imagem,mime_type,tamanho) VALUES (:dados_imagem,:mime_type,:tamanho)";
         $consulta = Conexao::prepare($sql);
         $consulta->bindValue('dados_imagem', $obj->dados_imagem, PDO::PARAM_LOB);
         $consulta->bindValue('mime_type', $obj->mime_type);
+        $consulta->bindValue('tamanho', $obj->tamanho);
         return $consulta->execute();
     }
 
     public function update($obj, $id = null)
     {
-        $sql = "UPDATE imagem SET dados_imagem = :dados_imagem, mime_type = :mime_type WHERE id = :id ";
+        $sql = "UPDATE imagem SET dados_imagem = :dados_imagem, mime_type = :mime_type, tamanho = :tamanho  WHERE id = :id ";
         $consulta = Conexao::prepare($sql);
         $consulta->bindValue('dados_imagem', $obj->dados_imagem, PDO::PARAM_LOB);
         $consulta->bindValue('mime_type', $obj->mime_type);

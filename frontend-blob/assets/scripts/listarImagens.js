@@ -1,4 +1,5 @@
-const BASE_BACKEND_URL = "http://localhost:8888/back_blob/";
+const BASE_BACKEND_URL =
+    "http://localhost:8888/image-store-research/backend-blob/";
 const imageListDiv = document.getElementById("image-list");
 const messageDiv = document.getElementById("message");
 const loadingMessage = document.getElementById("loading-message");
@@ -32,12 +33,17 @@ async function fetchAndDisplayImages() {
             loadingMessage.style.display = "none";
             if (result.data && result.data.length > 0) {
                 result.data.forEach((image) => {
+                    console.log(image);
+
                     const imageUrl = `data:${image.mime_type};base64,${image.dados_imagem_base64}`;
 
                     const imageCard = document.createElement("div");
                     imageCard.innerHTML = `
-                        <img src="${imageUrl}" alt="${image.nome}" class="imagem">
+                        <img src="${imageUrl}" alt="${
+                        image.nome
+                    }" class="imagem">
                         <p>Tipo: ${image.mime_type}</p>
+                        <p>Tamanho: ${(image.tamanho / 1024).toFixed(2)} KB</p>
                         <p>ID: ${image.id}</p>
                     `;
                     imageListDiv.appendChild(imageCard);
