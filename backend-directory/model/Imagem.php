@@ -69,6 +69,13 @@ class Imagem extends Conexao
         return $consulta->execute();
     }
 
+    public function clearAll()
+    {
+        $sql = "TRUNCATE TABLE imagem";
+        $consulta = Conexao::prepare($sql);
+        return $consulta->execute();
+    }
+
     public function find($id = null)
     {
         $sql = "SELECT * FROM imagem WHERE id = :id";

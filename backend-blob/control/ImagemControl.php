@@ -21,6 +21,12 @@ class ImagemControl
         return $imagem->delete($id);
     }
 
+    function clearAll()
+    {
+        $imagem = new Imagem();
+        return $imagem->clearAll();
+    }
+
     function find($id = null)
     {
         $imagem = new Imagem();

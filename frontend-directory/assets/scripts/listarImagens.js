@@ -79,3 +79,28 @@ async function fetchAndDisplayImages() {
 }
 
 document.addEventListener("DOMContentLoaded", fetchAndDisplayImages);
+
+const buttonClearAll = document.getElementById("clearAll");
+
+buttonClearAll.addEventListener("click", async () => {
+    try {
+        const response = await fetch(
+            `${BASE_BACKEND_URL}view/Imagem/limpar.php`,
+            {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                },
+            }
+        );
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error("Erro na limpeza das imagens", error);
+        displayMessage(
+            "Erro de conexão ao servidor ao listar imagens.",
+            "error"
+        );
+    }
+});
