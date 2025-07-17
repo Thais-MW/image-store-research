@@ -1,7 +1,5 @@
----
-
-* **Armazenamento em BLOBs (Binary Large Objects)**: Imagens são armazenadas diretamente em um banco de dados (MySQL) como dados binários.
-* **Armazenamento em Diretórios de Arquivos**: Imagens são salvas como arquivos no sistema de arquivos do servidor, e os caminhos são armazenados no banco de dados.
+-   **Armazenamento em BLOBs (Binary Large Objects)**: Imagens são armazenadas diretamente em um banco de dados (MySQL) como dados binários.
+-   **Armazenamento em Diretórios de Arquivos**: Imagens são salvas como arquivos no sistema de arquivos do servidor, e os caminhos são armazenados no banco de dados.
 
 ---
 
